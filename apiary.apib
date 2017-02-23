@@ -1,0 +1,118 @@
+HOST: http://www.google.com/
+
+--- Zkušební API v1 ---
+---
+Příklady REST metod, které poslouží jako reference.
+---
+
+--
+Metody Call centra
+Metody pro ovladani front a agentu. Komunikace s AMI [Dokumentace 1](https://wiki.asterisk.org/wiki/display/AST/Asterisk+1.8+Documentation), [Dokumentace 2](http://www.voip-info.org/wiki/view/Asterisk+manager+API) 
+--
+Detail fronty vcetne prihlasenych agentu. [Dokumentace](https://wiki.asterisk.org/wiki/display/AST/ManagerAction_QueueStatus)
+GET /api/v1/queue-status/{Queue}
+{ "Queue": "helpdesk"}
+< 200
+< Content-Type: application/json
+{
+    "queues": {
+        "params": [
+            {
+                "Calls": "3",
+                "Completed": "2",
+                "Abandoned": 1
+            }
+        ],
+        "member": [
+            {
+                "Name": "Agent007",
+                "Penalty": "1",
+                "CallsTaken": 2,
+                "LastCall": "60s",
+                "Status": "Not in use",
+                "Location": "Local/164@route_phones_1"
+            }
+        ]
+    }
+}
+
+Seznam front
+GET /api/v1/queues
+< 200
+< Content-Type: application/json
+{
+    "queues": [
+        {
+            "name": "helpdesk"
+        },
+        {
+            "name": "noc"
+            
+        }
+    ]
+}
+
+Prihlaseni uzivatele fronty [Dokumentace](https://wiki.asterisk.org/wiki/display/AST/ManagerAction_QueueAdd)
+POST /api/v1/member-add
+> Content-Type: application/json
+{ "queue":"helpdesk", "member": "Agent007" }
+< 200
+< Content-Type: application/json
+{ "status": "ok"}
+
+Odhlaseni uzivatele fronty [Dokumentace](https://wiki.asterisk.org/wiki/display/AST/ManagerAction_QueueRemove)
+POST /api/v1/member-remove
+> Content-Type: application/json
+{ "queue":"helpdesk", "member": "Agent007" }
+< 200
+< Content-Type: application/json
+{ "status": "ok"}
+
+Pauznuti uzivatele fronty [Dokumentace](https://wiki.asterisk.org/wiki/display/AST/ManagerAction_QueuePause)
+POST /api/v1/member-pause
+> Content-Type: application/json
+{
+    "Interface": "Local/164@route_phones_1",
+    "Paused": "pause",
+    "Queue": "helpdesk",
+    "Reason": "Obed"
+}
+< 200
+< Content-Type: application/json
+{ "status": "ok"}
+
+Odpauznuti uzivatele fronty [Dokumentace](https://wiki.asterisk.org/wiki/display/AST/ManagerAction_QueuePause)
+POST /api/v1/member-unpause
+> Content-Type: application/json
+{
+    "Interface": "Local/164@route_phones_1",
+    "Paused": "unpause",
+    "Queue": "helpdesk",
+    "Reason": "Obed"
+}
+< 200
+< Content-Type: application/json
+{ "status": "ok"}
+
+--
+Metody pro spravu uzivatelu.
+Zdroj dat je MySQL
+--
+Seznam uzivatelu.
+GET /api/v1/users
+< 200
+< Content-Type: application/json
+{
+    "users": [
+        {
+            "name": "František Bezperát",
+            "number": "20",
+            "photo": "data:image/png;base64,iVBOR..."
+        },
+        {
+            "name": "Miroslav Malant",
+            "number": "30",
+            "photo": "data:image/png;base64,iVBOR..."
+        }
+    ]
+}
